@@ -1,0 +1,6 @@
+make a variable called name
+set name to "Darrien"
+make a variable called age
+put 21 into age
+show name
+show age

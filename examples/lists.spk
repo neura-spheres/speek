@@ -1,0 +1,8 @@
+make a list called fruits
+add "apple" to fruits
+add "banana" to fruits
+add "mango" to fruits
+show length of fruits
+loop each item in fruits
+  show item
+end

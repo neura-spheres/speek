@@ -1,0 +1,164 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Speek",
+  "scopeName": "source.speek",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string" },
+    { "include": "#number" },
+    { "include": "#null-literal" },
+    { "include": "#bool-literal" },
+    { "include": "#builtin-multiword" },
+    { "include": "#comparator-multiword" },
+    { "include": "#control-multiword" },
+    { "include": "#control" },
+    { "include": "#declaration" },
+    { "include": "#assignment" },
+    { "include": "#output" },
+    { "include": "#function-keyword" },
+    { "include": "#math-op" },
+    { "include": "#input-keyword" },
+    { "include": "#delete-keyword" },
+    { "include": "#connector-multiword" },
+    { "include": "#connector" },
+    { "include": "#identifier" }
+  ],
+  "repository": {
+
+    "comment": {
+      "name": "comment.line.number-sign.speek",
+      "match": "(?:#|--).*$"
+    },
+
+    "string": {
+      "name": "string.quoted.double.speek",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.speek",
+          "match": "\\\\."
+        }
+      ]
+    },
+
+    "number": {
+      "name": "constant.numeric.speek",
+      "match": "-?\\b\\d+(\\.\\d+)?\\b"
+    },
+
+    "null-literal": {
+      "name": "constant.language.null.speek",
+      "match": "(?i)\\b(null|nothing|none|nil|undefined)\\b"
+    },
+
+    "bool-literal": {
+      "name": "constant.language.boolean.speek",
+      "match": "(?i)\\b(true|false|yes|no|on|off|enabled|disabled|active|inactive|correct|wrong)\\b"
+    },
+
+    "builtin-multiword": {
+      "comment": "Built-in functions. Longer phrases must come before shorter ones.",
+      "patterns": [
+        {
+          "name": "support.function.builtin.speek",
+          "match": "(?i)\\b(greater than or equal to|less than or equal to|square root of|cube root of|absolute value of|natural log of|log base 10 of|log base 2 of|arctan2 of|arcsin of|arccos of|arctan of|exp2 of|hypot of|ceiling of|floor of|round of|sign of|exp of|log of|sin of|cos of|tan of|power of|as number|as string|as bool|as list|is number|is string|is bool|is list|is null|is empty|is nan|is infinite|starts with|ends with|first char of|last char of|char at|index of|length of list|length of|first item in|last item in|sort list|shuffle list|reverse list|unique items in|sum of|average of|random between|random item from|random number|pad left|pad right|substring of|split by|join with|type of|read file|write to file|append to file|file exists|delete file|list files in|list files|encode as base64|decode from base64|hash of|format time|current time|current year|current month|current day|current hour|current minute|current second|a multiple of)\\b"
+        },
+        {
+          "name": "support.function.builtin.speek",
+          "match": "(?i)\\b(abs|sqrt|cbrt|ceil|floor|round|trunc|log10|log2|asin|acos|atan2|atan|log|sin|cos|tan|exp|hypot|uppercase|lowercase|reverse|trim|compare|contains|replace|repeat|shuffle|random|format|clamp|wait|pi|infinity)\\b"
+        }
+      ]
+    },
+
+    "comparator-multiword": {
+      "comment": "Comparison phrases. Longer phrases first.",
+      "patterns": [
+        {
+          "name": "keyword.control.speek",
+          "match": "(?i)\\b(greater than or equal to|greater than or equal|less than or equal to|less than or equal|is divisible by|divisible by|divides evenly by|greater than|more than|bigger than|larger than|fewer than|smaller than|lower than|no less than|no more than|not equal to|different from|equal to|same as|identical to|at least|at most|not equal|exceeds|above|below|under|over|equals|matches)\\b"
+        }
+      ]
+    },
+
+    "control-multiword": {
+      "comment": "Multi-word control phrases. Must come before single-word control.",
+      "patterns": [
+        {
+          "name": "keyword.control.speek",
+          "match": "(?i)\\b(end loop|end if|end function|end block|for each|go through each|keep going while|else if|only if|as long as|in case|given that|provided that|jump out)\\b"
+        }
+      ]
+    },
+
+    "control": {
+      "comment": "Single-word control keywords.",
+      "name": "keyword.control.speek",
+      "match": "(?i)\\b(loop|repeat|iterate|cycle|while|for|if|else|when|check|test|assuming|suppose|given|whenever|provided|should|end|done|finish|close|break|stop|quit|halt|abort|leave|terminate|continue|next|skip|exit)\\b"
+    },
+
+    "declaration": {
+      "comment": "Variable and function declaration keywords.",
+      "name": "storage.type.speek",
+      "match": "(?i)\\b(make|create|declare|define|initialize|init|establish|introduce|spawn|allocate|register|prepare|setup)\\b"
+    },
+
+    "assignment": {
+      "comment": "Assignment keywords.",
+      "name": "keyword.control.speek",
+      "match": "(?i)\\b(set|put|assign|store|save|let|change|update|give|move|load|feed|mark|bind|fix|force)\\b"
+    },
+
+    "output": {
+      "comment": "Output/print keywords.",
+      "name": "support.function.speek",
+      "match": "(?i)\\b(show|print|display|output|log|say|tell|echo|reveal|dump|report|emit|post|announce|present|render|spit)\\b"
+    },
+
+    "function-keyword": {
+      "comment": "Function definition and call keywords.",
+      "name": "keyword.control.speek",
+      "match": "(?i)\\b(teach|call|invoke|trigger|activate|fire|apply|launch|return)\\b"
+    },
+
+    "math-op": {
+      "comment": "Math operation keywords.",
+      "name": "keyword.control.speek",
+      "match": "(?i)\\b(add|increase|increment|plus|bump|raise|grow|boost|expand|append|accumulate|subtract|decrease|decrement|minus|reduce|lower|drop|shrink|cut|deduct|multiply|scale|double|triple|quadruple|amplify|divide|split|halve|share)\\b"
+    },
+
+    "input-keyword": {
+      "comment": "User input keywords.",
+      "name": "support.function.speek",
+      "match": "(?i)\\b(ask|read|accept|receive|take|prompt|request|scan)\\b"
+    },
+
+    "delete-keyword": {
+      "comment": "Delete/remove keywords.",
+      "name": "keyword.control.speek",
+      "match": "(?i)\\b(delete|remove|clear|reset|erase|destroy|forget|wipe|trash|kill|unset|nullify|discard|pop)\\b"
+    },
+
+    "connector-multiword": {
+      "comment": "Multi-word structural connectors.",
+      "patterns": [
+        {
+          "name": "keyword.other.speek",
+          "match": "(?i)\\b(that takes|known as|set up|wait for|listen for|as long as)\\b"
+        }
+      ]
+    },
+
+    "connector": {
+      "comment": "Single-word prepositions and glue words.",
+      "name": "keyword.other.speek",
+      "match": "(?i)\\b(called|named|labeled|that|takes|into|from|using|within|inside|through|onto|become|each|with|via|by|as|be|to|in|of|is|a|an|the|variable|function|list|times|value|number|text|item|items|result|type|word|line|file)\\b"
+    },
+
+    "identifier": {
+      "comment": "Fallback for user-defined variable and function names.",
+      "name": "variable.other.speek",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    }
+  }
+}

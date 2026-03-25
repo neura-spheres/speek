@@ -1,0 +1,782 @@
+define a function called letter_grade that takes score
+  if score is at least 90
+    return "A"
+  else if score is at least 80
+    return "B"
+  else if score is at least 70
+    return "C"
+  else if score is at least 60
+    return "D"
+  else
+    return "F"
+  end
+end
+
+define a function called grade_points that takes score
+  if score is at least 90
+    return 4
+  else if score is at least 80
+    return 3
+  else if score is at least 70
+    return 2
+  else if score is at least 60
+    return 1
+  else
+    return 0
+  end
+end
+
+define a function called is_passing that takes score
+  if score is at least 60
+    return 1
+  else
+    return 0
+  end
+end
+
+define a function called clamp_score that takes s
+  if s is greater than 100
+    return 100
+  else if s is less than 0
+    return 0
+  else
+    return s
+  end
+end
+
+define a function called rating_label that takes score
+  if score is at least 90
+    return "Excellent"
+  else if score is at least 80
+    return "Good"
+  else if score is at least 70
+    return "Average"
+  else if score is at least 60
+    return "Passing"
+  else
+    return "Below Average"
+  end
+end
+
+define a function called average3 that takes aa and bb and cc
+  make a variable called tot
+  set tot to aa
+  add bb to tot
+  add cc to tot
+  make a variable called result
+  set result to tot
+  divide result by 3
+  return result
+end
+
+define a function called get_deviation that takes val and mean
+  make a variable called diff
+  set diff to val
+  subtract mean from diff
+  set diff to abs diff
+  return diff
+end
+
+define a function called passes_all that takes mm and ss and ee
+  make a variable called pm
+  set pm to is_passing with mm
+  make a variable called ps
+  set ps to is_passing with ss
+  make a variable called pe
+  set pe to is_passing with ee
+  if pm is 1
+    if ps is 1
+      if pe is 1
+        return 1
+      end
+    end
+  end
+  return 0
+end
+
+define a function called improvement_tip that takes score
+  if score is at least 90
+    return "Maintain excellence"
+  else if score is at least 80
+    return "Push for an A"
+  else if score is at least 70
+    return "Aim for 80"
+  else if score is at least 60
+    return "Study harder"
+  else
+    return "Seek tutoring immediately"
+  end
+end
+
+define a function called next_boundary that takes score
+  if score is less than 60
+    return 60
+  else if score is less than 70
+    return 70
+  else if score is less than 80
+    return 80
+  else if score is less than 90
+    return 90
+  else
+    return 100
+  end
+end
+
+
+# ---- DATA STORAGE parallel lists ----------------------------
+make a list called names
+make a list called math_scores
+make a list called science_scores
+make a list called english_scores
+make a list called averages
+make a list called gpa_points
+
+make a variable called num
+ask "How many students to enter? " for num
+
+if num is less than 1
+  show "No students entered"
+  exit
+end
+
+if num is greater than 50
+  set num to 50
+  show "Capped at 50 students"
+end
+
+show ""
+
+make a variable called idx
+set idx to 1
+
+while idx is at most num
+  show "--- Student"
+  show idx
+  show "---"
+
+  make a variable called sname
+  ask "  Name: " for sname
+
+  make a variable called mth
+  ask "  Math score (0-100): " for mth
+  set mth to clamp_score with mth
+  set mth to round mth
+
+  make a variable called sci
+  ask "  Science score (0-100): " for sci
+  set sci to clamp_score with sci
+  set sci to round sci
+
+  make a variable called eng
+  ask "  English score (0-100): " for eng
+  set eng to clamp_score with eng
+  set eng to round eng
+
+  make a variable called avg
+  set avg to average3 with mth and sci and eng
+  set avg to round avg
+
+  make a variable called gp
+  set gp to grade_points with avg
+
+  add sname to names
+  add mth to math_scores
+  add sci to science_scores
+  add eng to english_scores
+  add avg to averages
+  add gp to gpa_points
+
+  show "  Recorded"
+  show ""
+  add 1 to idx
+end
+
+
+# ---- COMPUTE CLASS STATISTICS --------------------------------
+make a variable called class_avg
+set class_avg to average of averages
+set class_avg to round class_avg
+
+make a variable called best_score
+set best_score to 0
+
+make a variable called worst_score
+set worst_score to 100
+
+make a variable called passing_count
+set passing_count to 0
+
+make a variable called honors_count
+set honors_count to 0
+
+make a variable called failing_count
+set failing_count to 0
+
+make a variable called total_gpa
+set total_gpa to sum of gpa_points
+
+loop each score in averages
+  if score is greater than best_score
+    set best_score to score
+  end
+  if score is less than worst_score
+    set worst_score to score
+  end
+  if score is at least 60
+    add 1 to passing_count
+  else
+    add 1 to failing_count
+  end
+  if score is at least 80
+    add 1 to honors_count
+  end
+end
+
+make a variable called avg_gpa
+set avg_gpa to total_gpa
+divide avg_gpa by num
+
+make a variable called math_avg
+set math_avg to average of math_scores
+set math_avg to round math_avg
+
+make a variable called sci_avg
+set sci_avg to average of science_scores
+set sci_avg to round sci_avg
+
+make a variable called eng_avg
+set eng_avg to average of english_scores
+set eng_avg to round eng_avg
+
+
+# ---- BEST AND WEAKEST SUBJECT --------------------------------
+make a variable called best_subject
+if math_avg is greater than sci_avg
+  if math_avg is greater than eng_avg
+    set best_subject to "Math"
+  else
+    set best_subject to "English"
+  end
+else
+  if sci_avg is greater than eng_avg
+    set best_subject to "Science"
+  else
+    set best_subject to "English"
+  end
+end
+
+make a variable called weak_subject
+if math_avg is less than sci_avg
+  if math_avg is less than eng_avg
+    set weak_subject to "Math"
+  else
+    set weak_subject to "English"
+  end
+else
+  if sci_avg is less than eng_avg
+    set weak_subject to "Science"
+  else
+    set weak_subject to "English"
+  end
+end
+
+
+# ---- COUNT ALL-SUBJECT-PASSING STUDENTS ---------------------
+make a variable called all_pass_count
+set all_pass_count to 0
+make a variable called ap_idx
+set ap_idx to 0
+
+while ap_idx is less than num
+  make a variable called am
+  set am to item at math_scores and ap_idx
+  make a variable called as
+  set as to item at science_scores and ap_idx
+  make a variable called ae
+  set ae to item at english_scores and ap_idx
+  make a variable called ap
+  set ap to passes_all with am and as and ae
+  if ap is 1
+    add 1 to all_pass_count
+  end
+  add 1 to ap_idx
+end
+
+
+# ---- INDIVIDUAL REPORT CARDS ---------------------------------
+show ""
+show "============================================================"
+show "                INDIVIDUAL REPORT CARDS                    "
+show "============================================================"
+
+make a variable called ri
+set ri to 0
+
+while ri is less than num
+  make a variable called rname
+  set rname to item at names and ri
+  make a variable called rm
+  set rm to item at math_scores and ri
+  make a variable called rs
+  set rs to item at science_scores and ri
+  make a variable called re
+  set re to item at english_scores and ri
+  make a variable called ra
+  set ra to item at averages and ri
+  make a variable called rgp
+  set rgp to item at gpa_points and ri
+
+  make a variable called rlg
+  set rlg to letter_grade with ra
+  make a variable called rsr
+  set rsr to rating_label with ra
+  make a variable called rdev
+  set rdev to get_deviation with ra and class_avg
+  make a variable called rpassed
+  set rpassed to passes_all with rm and rs and re
+  make a variable called rtip
+  set rtip to improvement_tip with ra
+
+  show "------------------------------------------------------------"
+  show rname
+  show "------------------------------------------------------------"
+  show "  Math    :"
+  show rm
+  show "  Science :"
+  show rs
+  show "  English :"
+  show re
+  show "  Average :"
+  show ra
+  show "  Grade   :"
+  show rlg
+  show "  GPA pts :"
+  show rgp
+  show "  Rating  :"
+  show rsr
+  show "  Dev from class avg:"
+  show rdev
+  show "  Tip     :"
+  show rtip
+
+  if rpassed is 1
+    show "  Status  : PASSED ALL SUBJECTS"
+  else
+    show "  Status  : FAILED ONE OR MORE SUBJECTS"
+  end
+
+  if ra is at least 90
+    show "  Remark  : Outstanding performance!"
+  else if ra is at least 80
+    show "  Remark  : Excellent work!"
+  else if ra is at least 70
+    show "  Remark  : Good effort - keep it up"
+  else if ra is at least 60
+    show "  Remark  : Passing but room to improve"
+  else
+    show "  Remark  : Needs significant improvement"
+  end
+
+  show ""
+  add 1 to ri
+end
+
+
+# ---- CLASS SUMMARY -------------------------------------------
+show "============================================================"
+show "                    CLASS SUMMARY                          "
+show "============================================================"
+show ""
+show "  Total students  :"
+show num
+show "  Passing         :"
+show passing_count
+show "  Failing         :"
+show failing_count
+show "  Honors (>=80)   :"
+show honors_count
+show "  Passed all subs :"
+show all_pass_count
+show ""
+show "  Class average   :"
+show class_avg
+show "  Highest average :"
+show best_score
+show "  Lowest average  :"
+show worst_score
+show "  Average GPA pts :"
+show avg_gpa
+show ""
+show "  Math avg        :"
+show math_avg
+show "  Science avg     :"
+show sci_avg
+show "  English avg     :"
+show eng_avg
+show ""
+show "  Strongest subject:"
+show best_subject
+show "  Weakest subject  :"
+show weak_subject
+show ""
+
+
+# ---- GRADE DISTRIBUTION CHART --------------------------------
+show "============================================================"
+show "             GRADE DISTRIBUTION (by average)               "
+show "============================================================"
+
+make a variable called count_A
+set count_A to 0
+make a variable called count_B
+set count_B to 0
+make a variable called count_C
+set count_C to 0
+make a variable called count_D
+set count_D to 0
+make a variable called count_F
+set count_F to 0
+
+loop each score in averages
+  if score is at least 90
+    add 1 to count_A
+  else if score is at least 80
+    add 1 to count_B
+  else if score is at least 70
+    add 1 to count_C
+  else if score is at least 60
+    add 1 to count_D
+  else
+    add 1 to count_F
+  end
+end
+
+show "  A (90-100) :"
+show count_A
+show "  B (80-89)  :"
+show count_B
+show "  C (70-79)  :"
+show count_C
+show "  D (60-69)  :"
+show count_D
+show "  F (0-59)   :"
+show count_F
+show ""
+
+
+# ---- TOP PERFORMERS ------------------------------------------
+show "============================================================"
+show "                    TOP PERFORMERS                         "
+show "============================================================"
+
+make a variable called tp_idx
+set tp_idx to 0
+make a variable called tp_found
+set tp_found to 0
+
+while tp_idx is less than num
+  make a variable called tname
+  set tname to item at names and tp_idx
+  make a variable called tavg
+  set tavg to item at averages and tp_idx
+  if tavg is at least 80
+    show tname
+    show tavg
+    set tp_found to 1
+  end
+  add 1 to tp_idx
+end
+
+if tp_found is 0
+  show "  No student scored 80 or above"
+end
+
+show ""
+
+
+# ---- STUDENTS NEEDING SUPPORT --------------------------------
+show "============================================================"
+show "               STUDENTS NEEDING SUPPORT                    "
+show "============================================================"
+
+make a variable called ns_idx
+set ns_idx to 0
+make a variable called found_struggling
+set found_struggling to 0
+
+while ns_idx is less than num
+  make a variable called nsname
+  set nsname to item at names and ns_idx
+  make a variable called nsavg
+  set nsavg to item at averages and ns_idx
+  if nsavg is less than 70
+    show nsname
+    show nsavg
+    set found_struggling to 1
+  end
+  add 1 to ns_idx
+end
+
+if found_struggling is 0
+  show "  All students performing at 70 or above"
+end
+
+show ""
+
+
+# ---- SUBJECT LEADERS -----------------------------------------
+show "============================================================"
+show "                  SUBJECT LEADERS                          "
+show "============================================================"
+
+make a variable called best_math
+set best_math to 0
+make a variable called best_math_name
+set best_math_name to "None"
+make a variable called best_sci
+set best_sci to 0
+make a variable called best_sci_name
+set best_sci_name to "None"
+make a variable called best_eng
+set best_eng to 0
+make a variable called best_eng_name
+set best_eng_name to "None"
+
+make a variable called sl_idx
+set sl_idx to 0
+
+while sl_idx is less than num
+  make a variable called slname
+  set slname to item at names and sl_idx
+  make a variable called slm
+  set slm to item at math_scores and sl_idx
+  make a variable called sls
+  set sls to item at science_scores and sl_idx
+  make a variable called sle
+  set sle to item at english_scores and sl_idx
+
+  if slm is greater than best_math
+    set best_math to slm
+    set best_math_name to slname
+  end
+  if sls is greater than best_sci
+    set best_sci to sls
+    set best_sci_name to slname
+  end
+  if sle is greater than best_eng
+    set best_eng to sle
+    set best_eng_name to slname
+  end
+
+  add 1 to sl_idx
+end
+
+show "  Best in Math    :"
+show best_math_name
+show best_math
+show "  Best in Science :"
+show best_sci_name
+show best_sci
+show "  Best in English :"
+show best_eng_name
+show best_eng
+show ""
+
+
+# ---- IMPROVEMENT POTENTIAL ANALYSIS --------------------------
+show "============================================================"
+show "             IMPROVEMENT POTENTIAL ANALYSIS                "
+show "============================================================"
+show ""
+
+make a variable called ip_idx
+set ip_idx to 0
+
+while ip_idx is less than num
+  make a variable called ipname
+  set ipname to item at names and ip_idx
+  make a variable called ipa
+  set ipa to item at averages and ip_idx
+
+  make a variable called ipnb
+  set ipnb to next_boundary with ipa
+
+  make a variable called ipneeded
+  set ipneeded to ipnb
+  subtract ipa from ipneeded
+
+  show ipname
+  show "  Current avg  :"
+  show ipa
+  show "  Next target  :"
+  show ipnb
+  show "  Points needed:"
+  show ipneeded
+
+  if ipneeded is 0
+    show "  Already at peak grade!"
+  else if ipneeded is less than 5
+    show "  So close - just a little more effort"
+  else if ipneeded is less than 15
+    show "  Achievable with consistent study"
+  else
+    show "  Significant work needed"
+  end
+  show ""
+
+  add 1 to ip_idx
+end
+
+
+# ---- SUBJECT VARIANCE ANALYSIS -------------------------------
+show "============================================================"
+show "               SUBJECT VARIANCE ANALYSIS                   "
+show "============================================================"
+show ""
+
+make a variable called sv_idx
+set sv_idx to 0
+
+while sv_idx is less than num
+  make a variable called svname
+  set svname to item at names and sv_idx
+  make a variable called svm
+  set svm to item at math_scores and sv_idx
+  make a variable called svs
+  set svs to item at science_scores and sv_idx
+  make a variable called sve
+  set sve to item at english_scores and sv_idx
+
+  make a variable called top_sub
+  set top_sub to "Math"
+  make a variable called top_val
+  set top_val to svm
+
+  if svs is greater than top_val
+    set top_sub to "Science"
+    set top_val to svs
+  end
+  if sve is greater than top_val
+    set top_sub to "English"
+    set top_val to sve
+  end
+
+  make a variable called low_sub
+  set low_sub to "Math"
+  make a variable called low_val
+  set low_val to svm
+
+  if svs is less than low_val
+    set low_sub to "Science"
+    set low_val to svs
+  end
+  if sve is less than low_val
+    set low_sub to "English"
+    set low_val to sve
+  end
+
+  make a variable called spread
+  set spread to top_val
+  subtract low_val from spread
+
+  show svname
+  show "  Strongest subject:"
+  show top_sub
+  show top_val
+  show "  Weakest subject  :"
+  show low_sub
+  show low_val
+  show "  Score spread     :"
+  show spread
+
+  if spread is less than 10
+    show "  Profile: Very balanced learner"
+  else if spread is less than 25
+    show "  Profile: Moderately balanced"
+  else
+    show "  Profile: Specialist - strong variation"
+  end
+  show ""
+
+  add 1 to sv_idx
+end
+
+
+# ---- GPA HONOR ROLL ------------------------------------------
+show "============================================================"
+show "                     GPA HONOR ROLL                        "
+show "============================================================"
+
+make a variable called hr_idx
+set hr_idx to 0
+make a variable called hr_found
+set hr_found to 0
+
+while hr_idx is less than num
+  make a variable called hrname
+  set hrname to item at names and hr_idx
+  make a variable called hrgp
+  set hrgp to item at gpa_points and hr_idx
+  if hrgp is at least 3
+    show hrname
+    show "  GPA points:"
+    show hrgp
+    set hr_found to 1
+  end
+  add 1 to hr_idx
+end
+
+if hr_found is 0
+  show "  No students qualified for the honor roll"
+end
+
+show ""
+
+
+# ---- FUN STATS WITH MATH BUILTINS ----------------------------
+show "============================================================"
+show "                  FUN STATISTICS                           "
+show "============================================================"
+show ""
+
+make a variable called class_sum
+set class_sum to sum of averages
+
+make a variable called sq_class_avg
+set sq_class_avg to square root of class_avg
+
+make a variable called score_range
+set score_range to best_score
+subtract worst_score from score_range
+
+make a variable called mid_range
+set mid_range to best_score
+add worst_score to mid_range
+divide mid_range by 2
+set mid_range to round mid_range
+
+show "  Sum of all averages  :"
+show class_sum
+show "  Sqrt of class avg    :"
+show sq_class_avg
+show "  Score range (hi-lo)  :"
+show score_range
+show "  Mid-range            :"
+show mid_range
+show ""
+
+show "  Subject avg comparison:"
+show "    Math avg    :"
+show math_avg
+show "    Science avg :"
+show sci_avg
+show "    English avg :"
+show eng_avg
+show ""
+
+
+# ---- FINAL FOOTER --------------------------------------------
+show "============================================================"
+show "  Gradebook report complete"
+show "  Thank you for using Gradebook - written in Speek!"
+show "============================================================"

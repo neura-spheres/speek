@@ -1,0 +1,8 @@
+make a variable called message
+set message to "hello world"
+set message to uppercase message
+show message
+
+make a variable called greeting
+set greeting to "Hello, Speek!"
+show length of greeting

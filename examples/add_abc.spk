@@ -1,0 +1,15 @@
+make a variable called a, set a to 10.
+make a variable called b, set b to 20.
+make a variable called c, set c to 30.
+
+make a variable called total
+set total as a + b + c
+show total
+
+make a variable called result
+set result to a * b + c
+show result
+
+make a variable called fancy
+fancy is (a + b) * c
+show fancy

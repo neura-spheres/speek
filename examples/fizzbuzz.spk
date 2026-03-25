@@ -1,0 +1,14 @@
+make a variable called i
+set i to 1
+loop 20 times
+  if i is divisible by 15
+    show "FizzBuzz"
+  else if i is divisible by 3
+    show "Fizz"
+  else if i is divisible by 5
+    show "Buzz"
+  else
+    show i
+  end
+  add 1 to i
+end

@@ -1,0 +1,10 @@
+define a function called double that takes x
+  make a variable called result
+  set result to x
+  multiply result by 2
+  return result
+end
+
+make a variable called answer
+set answer to double with 5
+show answer

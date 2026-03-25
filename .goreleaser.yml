@@ -1,0 +1,74 @@
+version: 2
+
+project_name: speek
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    binary: speek
+
+archives:
+  - id: speek
+    name_template: "speek_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - examples/*
+
+checksum:
+  name_template: "speek_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+release:
+  github:
+    owner: neura-spheres
+    name: speek
+  draft: false
+  prerelease: auto
+  name_template: "Speek v{{ .Version }}"
+  header: |
+    ## Speek {{ .Version }}
+    Natural language programming language. No AI, no internet, forever free.
+  footer: |
+    **Full Changelog**: https://github.com/neura-spheres/speek/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+brews:
+  - name: speek
+    repository:
+      owner: neura-spheres
+      name: homebrew-speek
+    homepage: https://github.com/neura-spheres/speek
+    description: Natural language programming language. No AI, no internet.
+    license: MIT
+    test: |
+      system "#{bin}/speek", "version"
+    install: |
+      bin.install "speek"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - Merge pull request
+      - Merge branch

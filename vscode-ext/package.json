@@ -1,0 +1,95 @@
+{
+  "name": "speek",
+  "displayName": "Speek",
+  "description": "Syntax highlighting and run support for Speek (.spk) files",
+  "version": "0.1.0",
+  "publisher": "speek-lang",
+  "engines": {
+    "vscode": "^1.79.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neura-spheres/speek"
+  },
+  "activationEvents": [
+    "onLanguage:speek"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "speek",
+        "aliases": ["Speek", "speek"],
+        "extensions": [".spk"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/speekLogo.png",
+          "dark": "./icons/speekLogo.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "speek",
+        "scopeName": "source.speek",
+        "path": "./syntaxes/speek.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "speek.runFile",
+        "title": "Run Speek File",
+        "category": "Speek",
+        "icon": "$(play)"
+      },
+      {
+        "command": "speek.debugFile",
+        "title": "Run Speek File (Debug)",
+        "category": "Speek",
+        "icon": "$(debug-alt)"
+      },
+      {
+        "command": "speek.checkFile",
+        "title": "Check Speek File",
+        "category": "Speek",
+        "icon": "$(check)"
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "speek.runFile",
+          "when": "resourceExtname == .spk",
+          "group": "navigation@1"
+        },
+        {
+          "command": "speek.debugFile",
+          "when": "resourceExtname == .spk",
+          "group": "navigation@2"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "speek.runFile",
+          "when": "resourceExtname == .spk",
+          "group": "speek"
+        },
+        {
+          "command": "speek.checkFile",
+          "when": "resourceExtname == .spk",
+          "group": "speek"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "speek.runFile",
+        "key": "f5",
+        "when": "resourceExtname == .spk && editorTextFocus"
+      }
+    ]
+  }
+}

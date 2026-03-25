@@ -1,0 +1,12 @@
+make a variable called x
+set x to 144
+make a variable called result
+set result to square root of x
+show result
+
+set x to -5
+set result to abs x
+show result
+
+set result to pi
+show result

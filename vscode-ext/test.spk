@@ -1,0 +1,61 @@
+# This is a comment
+# Variables
+make a variable called score
+set score to 0
+make a variable called name
+put "Darrien" into name
+
+# Math
+add 50 to score
+subtract 10 from score
+multiply score by 2
+divide score by 4
+
+# Built-ins
+make a variable called result
+set result to square root of score
+show uppercase name
+show length of name
+show round result
+
+# Boolean and null
+make a variable called active
+set active to true
+make a variable called data
+set data to null
+
+# Loop
+loop 5 times
+  add 1 to score
+  show score
+end
+
+# Condition
+if score is greater than 10
+  show "score is high"
+else
+  show "score is low"
+end
+
+# Function
+define a function called greet that takes name
+  show "Hello,"
+  show name
+end
+
+call greet with "Darrien"
+
+# List
+make a list called fruits
+add "apple" to fruits
+add "banana" to fruits
+show length of fruits
+for each item in fruits
+  show item
+end
+
+# Random and time
+make a variable called lucky
+set lucky to random between 1 and 100
+show lucky
+show current year
