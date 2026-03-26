@@ -1,10 +1,6 @@
-define a function called greet that takes name
+define a function called greet that takes name:
   show "Hello,"
   show name
-end
 
 call greet with "Anto"
 call greet with "Nina"
-
-
-make function

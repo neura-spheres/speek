@@ -53,6 +53,7 @@ type Node struct {
 	Extra    string // catch-all for misc data (loop end value, input prompt, etc.)
 	Line     int    // 1-based line number, used in error messages
 	Raw      string // original source line, used in error messages
+	Indent   int    // leading whitespace depth of the source line
 }
 
 type ElseIfBranch struct {

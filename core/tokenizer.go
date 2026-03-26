@@ -6,10 +6,11 @@ import (
 	"strings"
 )
 
-// Line holds a single source line with its original number.
+// Line holds a single source line with its original number and indentation depth.
 type Line struct {
 	Number int
 	Text   string
+	Indent int // number of leading spaces/tabs on the original physical line
 }
 
 // Tokenize splits source text into a slice of Line structs.
@@ -32,15 +33,20 @@ func Tokenize(source string) []Line {
 			continue
 		}
 
+		// Capture indentation before trimming — all comma-split segments
+		// from the same physical line share the same indent level.
+		indent := IndentLevel(raw)
+		trimmed := strings.TrimSpace(raw)
+
 		// Split line on commas and periods that act as separators.
-		segments := splitStatements(raw)
+		segments := splitStatements(trimmed)
 
 		for _, seg := range segments {
 			seg = strings.TrimSpace(seg)
 			if seg == "" {
 				continue
 			}
-			lines = append(lines, Line{Number: lineNum, Text: seg})
+			lines = append(lines, Line{Number: lineNum, Text: seg, Indent: indent})
 		}
 	}
 	return lines
@@ -88,7 +94,6 @@ func splitStatements(line string) []string {
 		current.WriteRune(ch)
 	}
 
-	// Trailing segment (no trailing punctuation required)
 	seg := strings.TrimSpace(current.String())
 	if seg != "" {
 		seg = leadingConnectors.ReplaceAllString(seg, "")
@@ -104,7 +109,6 @@ func splitStatements(line string) []string {
 	return segments
 }
 
-// IndentLevel returns the number of leading spaces/tabs.
 func IndentLevel(text string) int {
 	count := 0
 	for _, ch := range text {

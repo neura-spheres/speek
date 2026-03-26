@@ -293,15 +293,11 @@ var AllPatterns = []PatternTemplate{
 		Template: `read\s+line\s+for\s+{NAME}`,
 		Captures: []string{"name"},
 	},
-
-	// DELETE
 	{
 		Op:       "delete",
 		Template: `{VERB_DELETE}\s+{FILLER}\s*{NAME}`,
 		Captures: []string{"name"},
 	},
-
-	// MATH OPS
 	{
 		Op:       "add",
 		Template: `{VERB_ADD}\s+{VALUE}\s+to\s+{FILLER}\s*{NAME}`,

@@ -1,6 +1,5 @@
 make a variable called count
 set count to 1
-loop 5 times
+loop 5 times:
   show count
   add 1 to count
-end

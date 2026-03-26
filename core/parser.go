@@ -62,7 +62,12 @@ func (p *Parser) matchLines(lines []Line) ([]Node, []error) {
 }
 
 func (p *Parser) matchLine(ln Line) (Node, error) {
-	res, err := p.matcher.Match(ln.Number, ln.Text)
+	text := ln.Text
+	if strings.HasSuffix(text, ":") && !strings.HasSuffix(text, `":`) {
+		text = strings.TrimSpace(text[:len(text)-1])
+	}
+
+	res, err := p.matcher.Match(ln.Number, text)
 	if err != nil {
 		hint := FuzzySuggest(ln.Number, ln.Text, p.dict)
 		return Node{}, &ParseError{
@@ -72,7 +77,12 @@ func (p *Parser) matchLine(ln Line) (Node, error) {
 			Hint:    hint,
 		}
 	}
-	return p.buildNode(res)
+	node, err := p.buildNode(res)
+	if err != nil {
+		return Node{}, err
+	}
+	node.Indent = ln.Indent
+	return node, nil
 }
 
 func (p *Parser) buildNode(res MatchResult) (Node, error) {
@@ -351,7 +361,7 @@ func (p *Parser) buildNode(res MatchResult) (Node, error) {
 		}
 
 	default:
-		node.Type = NodeComment // unknown — treat as no-op
+		node.Type = NodeComment
 	}
 
 	return node, nil
@@ -398,109 +408,108 @@ func (p *Parser) wrapErr(res MatchResult, err error) error {
 	}
 }
 
-type stackFrame struct {
-	nodeType NodeType
-	body     *[]Node
-	node     *Node   // pointer to node in parent slice
-	parent   *[]Node // slice we're appending to
+// nestBlocks takes the flat list of nodes and nests them into a proper AST tree
+// using indentation to determine parent-child relationships.
+func nestBlocks(flat []Node) ([]Node, error) {
+	result, _, err := nestLevel(flat, 0, -1)
+	return result, err
 }
 
-// nestBlocks takes the flat list of nodes and nests them into a proper tree.
-// loop/if/function bodies become children of their parent node.
-func nestBlocks(flat []Node) ([]Node, error) {
-	root := make([]Node, 0, len(flat))
-	stack := []stackFrame{}
-
-	current := func() *[]Node {
-		if len(stack) == 0 {
-			return &root
-		}
-		return stack[len(stack)-1].body
+func isBlockOpener(t NodeType) bool {
+	switch t {
+	case NodeLoop, NodeWhile, NodeFor, NodeForEach, NodeFnDef:
+		return true
 	}
+	return false
+}
 
-	for i := range flat {
-		n := flat[i]
+// nestLevel recursively collects nodes whose Indent is strictly greater than
+// parentIndent (pass -1 for the root call to accept everything). It returns
+// the collected node slice and the index of the first unconsumed node.
+func nestLevel(flat []Node, idx int, parentIndent int) ([]Node, int, error) {
+	var result []Node
+
+	for idx < len(flat) {
+		n := flat[idx]
+
+		// Stop when we de-indent back to or past the parent's level.
+		if parentIndent >= 0 && n.Indent <= parentIndent {
+			break
+		}
+		idx++
 
 		switch n.Type {
-		case NodeLoop, NodeWhile, NodeFor, NodeForEach, NodeFnDef, NodeIf:
-			*current() = append(*current(), n)
-			pushed := &(*current())[len(*current())-1]
-			pushed.Body = []Node{}
-			stack = append(stack, stackFrame{
-				nodeType: n.Type,
-				body:     &pushed.Body,
-				node:     pushed,
-				parent:   current(),
-			})
-
-		case NodeElseIf:
-			if len(stack) == 0 {
-				return nil, &ParseError{Line: n.Line, Raw: n.Raw,
-					Message: "'else if' without a matching 'if'.",
-					Hint:    "Make sure every 'else if' follows an 'if' block."}
-			}
-			top := &stack[len(stack)-1]
-			if top.nodeType != NodeIf && top.nodeType != NodeElseIf {
-				return nil, &ParseError{Line: n.Line, Raw: n.Raw,
-					Message: "'else if' does not follow an 'if' block.",
-					Hint:    "Make sure the structure is: if ... else if ... else ... end"}
-			}
-			branch := ElseIfBranch{
-				Cmp:  n.Cmp,
-				Left: n.Name,
-			}
-			if n.Right != nil {
-				branch.Right = n.Right
-			}
-			if n.RightRef != "" {
-				branch.RightRef = n.RightRef
-			}
-			branch.Body = []Node{}
-			top.node.ElseIfs = append(top.node.ElseIfs, branch)
-			top.body = &top.node.ElseIfs[len(top.node.ElseIfs)-1].Body
-			top.nodeType = NodeElseIf
-
-		case NodeElse:
-			if len(stack) == 0 {
-				return nil, &ParseError{Line: n.Line, Raw: n.Raw,
-					Message: "'else' without a matching 'if'.",
-					Hint:    "Make sure every 'else' follows an 'if' block."}
-			}
-			top := &stack[len(stack)-1]
-			if top.nodeType != NodeIf && top.nodeType != NodeElseIf {
-				return nil, &ParseError{Line: n.Line, Raw: n.Raw,
-					Message: "'else' does not follow an 'if' block.",
-					Hint:    "Make sure the structure is: if ... else ... end"}
-			}
-			top.node.ElseBody = []Node{}
-			top.body = &top.node.ElseBody
-			top.nodeType = NodeElse
+		case NodeComment:
+			// drop
 
 		case NodeEnd:
-			if len(stack) == 0 {
-				return nil, &ParseError{Line: n.Line, Raw: n.Raw,
-					Message: "Extra 'end' — nothing to close here.",
-					Hint:    "Remove the extra 'end' or check your block structure."}
-			}
-			stack = stack[:len(stack)-1]
+			// Silently ignore — indentation now handles block scoping.
 
-		case NodeComment:
-			// comments are dropped
+		case NodeElse, NodeElseIf:
+			// These are only valid as continuations of an if block and should
+			// be consumed by the NodeIf case below, never appear standalone.
+			return nil, idx, &ParseError{
+				Line:    n.Line,
+				Raw:     n.Raw,
+				Message: fmt.Sprintf("'%s' without a matching 'if'.", n.Type),
+				Hint:    "Make sure 'else' / 'else if' follows an indented 'if' block.",
+			}
+
+		case NodeIf:
+			n.Body = []Node{}
+			var err error
+			n.Body, idx, err = nestLevel(flat, idx, n.Indent)
+			if err != nil {
+				return nil, 0, err
+			}
+
+			// Consume any else-if / else branches at the same indent level.
+			for idx < len(flat) {
+				next := flat[idx]
+				if next.Indent != n.Indent {
+					break
+				}
+				if next.Type == NodeElseIf {
+					idx++
+					branch := ElseIfBranch{
+						Cmp:      next.Cmp,
+						Left:     next.Name,
+						Right:    next.Right,
+						RightRef: next.RightRef,
+						Body:     []Node{},
+					}
+					branch.Body, idx, err = nestLevel(flat, idx, n.Indent)
+					if err != nil {
+						return nil, 0, err
+					}
+					n.ElseIfs = append(n.ElseIfs, branch)
+				} else if next.Type == NodeElse {
+					idx++
+					n.ElseBody = []Node{}
+					n.ElseBody, idx, err = nestLevel(flat, idx, n.Indent)
+					if err != nil {
+						return nil, 0, err
+					}
+					break
+				} else {
+					break
+				}
+			}
+
+			result = append(result, n)
 
 		default:
-			*current() = append(*current(), n)
+			if isBlockOpener(n.Type) {
+				n.Body = []Node{}
+				var err error
+				n.Body, idx, err = nestLevel(flat, idx, n.Indent)
+				if err != nil {
+					return nil, 0, err
+				}
+			}
+			result = append(result, n)
 		}
 	}
 
-	if len(stack) > 0 {
-		top := stack[len(stack)-1]
-		return nil, &ParseError{
-			Line:    0,
-			Raw:     "",
-			Message: fmt.Sprintf("Block of type '%s' was never closed with 'end'.", top.nodeType),
-			Hint:    "Add 'end' after the last line of your loop, if, or function block.",
-		}
-	}
-
-	return root, nil
+	return result, idx, nil
 }
