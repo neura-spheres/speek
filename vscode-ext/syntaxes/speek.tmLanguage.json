@@ -9,9 +9,11 @@
     { "include": "#null-literal" },
     { "include": "#bool-literal" },
     { "include": "#builtin-multiword" },
+    { "include": "#math-comparator" },
     { "include": "#comparator-multiword" },
     { "include": "#control-multiword" },
     { "include": "#control" },
+    { "include": "#type-indicator" },
     { "include": "#declaration" },
     { "include": "#assignment" },
     { "include": "#output" },
@@ -62,7 +64,7 @@
       "patterns": [
         {
           "name": "support.function.builtin.speek",
-          "match": "(?i)\\b(greater than or equal to|less than or equal to|square root of|cube root of|absolute value of|natural log of|log base 10 of|log base 2 of|arctan2 of|arcsin of|arccos of|arctan of|exp2 of|hypot of|ceiling of|floor of|round of|sign of|exp of|log of|sin of|cos of|tan of|power of|as number|as string|as bool|as list|is number|is string|is bool|is list|is null|is empty|is nan|is infinite|starts with|ends with|first char of|last char of|char at|index of|length of list|length of|first item in|last item in|sort list|shuffle list|reverse list|unique items in|sum of|average of|random between|random item from|random number|pad left|pad right|substring of|split by|join with|type of|read file|write to file|append to file|file exists|delete file|list files in|list files|encode as base64|decode from base64|hash of|format time|current time|current year|current month|current day|current hour|current minute|current second|a multiple of)\\b"
+          "match": "(?i)\\b(greater than or equal to|less than or equal to|square root of|cube root of|absolute value of|natural log of|log base 10 of|log base 2 of|arctan2 of|arcsin of|arccos of|arctan of|exp2 of|hypot of|ceiling of|floor of|round of|sign of|exp of|log of|sin of|cos of|tan of|power of|as number|as string|as bool|as list|is number|is string|is bool|is list|is null|is empty|is nan|is infinite|starts with|ends with|first char of|last char of|char at|index of|length of list|length of|first item in|last item in|sort list|shuffle list|reverse list|unique items in|sum of|average of|random between|random item from|random number|pad left|pad right|substring of|split by|join with|type of|read file|write to file|append to file|file exists|delete file|list files in|list files|encode as base64|decode from base64|hash of|format time|current time|current year|current month|current day|current hour|current minute|current second)\\b"
         },
         {
           "name": "support.function.builtin.speek",
@@ -71,12 +73,18 @@
       ]
     },
 
+    "math-comparator": {
+      "comment": "Arithmetic/divisibility checks — same color as math operations.",
+      "name": "keyword.operator.arithmetic.speek",
+      "match": "(?i)\\b(is\\s+divisible\\s+by|divisible\\s+by|divides\\s+evenly\\s+by|is\\s+a\\s+multiple\\s+of|a\\s+multiple\\s+of|is\\s+even|is\\s+odd|is\\s+positive|is\\s+negative)\\b"
+    },
+
     "comparator-multiword": {
-      "comment": "Comparison phrases. Longer phrases first.",
+      "comment": "Logical comparison phrases. Longer phrases first.",
       "patterns": [
         {
-          "name": "keyword.control.speek",
-          "match": "(?i)\\b(greater than or equal to|greater than or equal|less than or equal to|less than or equal|is divisible by|divisible by|divides evenly by|greater than|more than|bigger than|larger than|fewer than|smaller than|lower than|no less than|no more than|not equal to|different from|equal to|same as|identical to|at least|at most|not equal|exceeds|above|below|under|over|equals|matches)\\b"
+          "name": "keyword.operator.comparison.speek",
+          "match": "(?i)\\b(greater than or equal to|greater than or equal|less than or equal to|less than or equal|greater than|more than|bigger than|larger than|fewer than|smaller than|lower than|no less than|no more than|not equal to|different from|equal to|same as|identical to|at least|at most|not equal|exceeds|above|below|under|over|equals|matches)\\b"
         }
       ]
     },
@@ -94,12 +102,18 @@
     "control": {
       "comment": "Single-word control keywords.",
       "name": "keyword.control.speek",
-      "match": "(?i)\\b(loop|repeat|iterate|cycle|while|for|if|else|when|check|test|assuming|suppose|given|whenever|provided|should|end|done|finish|close|break|stop|quit|halt|abort|leave|terminate|continue|next|skip|exit)\\b"
+      "match": "(?i)\\b(loop|repeat|iterate|cycle|while|for|if|else|when|check|test|assuming|suppose|given|whenever|provided|should|end|done|finish|close|break|stop|quit|halt|abort|leave|terminate|continue|next|skip|exit|otherwise)\\b"
+    },
+
+    "type-indicator": {
+      "comment": "Type phrases: 'a variable', 'a list', 'a function' — colors the article + type word together.",
+      "name": "entity.name.type.speek",
+      "match": "(?i)\\b(?:a|an|the)\\s+(?:variable|val|var|number|thing|string|text|list|function|action|task|method|procedure)\\b"
     },
 
     "declaration": {
-      "comment": "Variable and function declaration keywords.",
-      "name": "storage.type.speek",
+      "comment": "Declaration verbs — same color as assignment so 'make' matches 'set'.",
+      "name": "keyword.control.speek",
       "match": "(?i)\\b(make|create|declare|define|initialize|init|establish|introduce|spawn|allocate|register|prepare|setup)\\b"
     },
 
@@ -122,9 +136,9 @@
     },
 
     "math-op": {
-      "comment": "Math operation keywords.",
-      "name": "keyword.control.speek",
-      "match": "(?i)\\b(add|increase|increment|plus|bump|raise|grow|boost|expand|append|accumulate|subtract|decrease|decrement|minus|reduce|lower|drop|shrink|cut|deduct|multiply|scale|double|triple|quadruple|amplify|divide|split|halve|share)\\b"
+      "comment": "Math operation keywords — distinct color from control flow.",
+      "name": "keyword.operator.arithmetic.speek",
+      "match": "(?i)\\b(add|increase|increment|plus|bump|raise|grow|boost|expand|accumulate|subtract|decrease|decrement|minus|reduce|lower|drop|shrink|cut|deduct|multiply|scale|double|triple|quadruple|amplify|divide|split|halve|share|modulo|mod|power|squared|cubed)\\b"
     },
 
     "input-keyword": {
@@ -150,9 +164,9 @@
     },
 
     "connector": {
-      "comment": "Single-word prepositions and glue words.",
+      "comment": "Single-word prepositions and glue words. 'a' is excluded — handled contextually by type-indicator or falls through to identifier.",
       "name": "keyword.other.speek",
-      "match": "(?i)\\b(called|named|labeled|that|takes|into|from|using|within|inside|through|onto|become|each|with|via|by|as|be|to|in|of|is|a|an|the|variable|function|list|times|value|number|text|item|items|result|type|word|line|file)\\b"
+      "match": "(?i)\\b(called|named|labeled|that|takes|into|from|using|within|inside|through|onto|become|each|with|via|by|as|be|to|in|of|is|an|the|times|value|item|items|result|type|word|line|file)\\b"
     },
 
     "identifier": {

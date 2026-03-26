@@ -2,7 +2,7 @@
   "name": "speek",
   "displayName": "Speek",
   "description": "Syntax highlighting and run support for Speek (.spk) files",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "speek-lang",
   "engines": {
     "vscode": "^1.79.0"
@@ -91,5 +91,44 @@
         "when": "resourceExtname == .spk && editorTextFocus"
       }
     ]
+  },
+
+  "configurationDefaults": {
+    "editor.tokenColorCustomizations": {
+      "textMateRules": [
+        {
+          "scope": "variable.other.speek",
+          "settings": { "foreground": "#9CDCFE" }
+        },
+        {
+          "scope": "entity.name.type.speek",
+          "settings": { "foreground": "#4EC9B0", "fontStyle": "italic" }
+        },
+        {
+          "scope": "keyword.operator.arithmetic.speek",
+          "settings": { "foreground": "#F4A261" }
+        },
+        {
+          "scope": "keyword.operator.comparison.speek",
+          "settings": { "foreground": "#DCDCAA" }
+        },
+        {
+          "scope": "keyword.control.speek",
+          "settings": { "foreground": "#C586C0" }
+        },
+        {
+          "scope": "keyword.other.speek",
+          "settings": { "foreground": "#858585" }
+        },
+        {
+          "scope": "support.function.speek",
+          "settings": { "foreground": "#4FC1FF" }
+        },
+        {
+          "scope": "support.function.builtin.speek",
+          "settings": { "foreground": "#DCDCAA" }
+        }
+      ]
+    }
   }
 }
